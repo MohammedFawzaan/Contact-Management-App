@@ -1,0 +1,30 @@
+<% layout("./layouts/boilerplate.ejs") %>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h3>Contact Manager App</h3>
+            <form method="get" action="/api/contacts">
+                <input class="input-search" type="text" placeholder="Search Contact">
+                <button class="edit-btn">Search</button>
+            </form>
+        </div>
+        <div class="contacts">
+            <% for(let contact of contacts) { %>
+                <div class="single-contact">
+                    <h3><%= contact.name %></h3>
+                    <h5><%= contact.phoneno %></h5>
+                    <h5><%= contact.email %></h5>
+                    <div class="btn-container">
+                        <form method="get" action="/api/contacts/<%= contact._id %>/edit">
+                            <button class="edit-btn">Edit</button>
+                        </form>
+                        <form method="post" action="/api/contacts/<%= contact._id %>?_method=DELETE">
+                            <button class="delete-btn">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</body>
