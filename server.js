@@ -5,6 +5,8 @@ const app = express();
 const ejs = require('ejs');
 const ejsMate = require('ejs-mate');
 const methodOverride = require('method-override');
+const bcrypt = require('bcrypt');
+const JWT = require('jsonwebtoken');
 const port = process.env.PORT || 3000;
 
 const errorHandler = require('./middleware/errorhandler');
@@ -37,13 +39,15 @@ app.get('/api/contacts/:id/edit', async (req, res)=>{
   res.render('UI/edit.ejs',{oneContact});
 });
 
-app.get('/api/contacts/search', (req, res) => {
-  
-});
-
 app.use(methodOverride('_method'));
 app.use('/api/contacts', require('./routes/contactRoutes'));
+app.use('/api/user', require('./routes/userRoutes'));
 app.use(errorHandler);
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Internal Server Error' });
+});
 
 app.listen(port, (req, res) => {
     console.log(`app listening ${port}`);
