@@ -4,7 +4,7 @@ const asyncHandler = require('express-async-handler');
 // getallcontact route /
 const getAllContacts = asyncHandler(async (req, res) => {
     const contacts = await Contacts.find({user_id: req.userAvailable.id});
-    res.render("UI/index.ejs", {contacts});
+    res.status(200).json({contacts});
 });
 
 // getonecontact route /:id
@@ -32,12 +32,16 @@ const createContact = asyncHandler(async (req, res) => {
         email: email,
         user_id: req.userAvailable.id
     }).save();
-    res.redirect('/api/contacts');
+    res.status(200).json({ oneContact });
 });
 
 // update route /:id
 const updateContact = asyncHandler(async (req, res) => {
     let {id} = req.params;
+    if(!id) {
+        res.status(404);
+        throw new Error("Id Not Found!");
+    }
     let {name, email, phoneno} = req.body;
 
     // Protection from other user 
@@ -52,8 +56,7 @@ const updateContact = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error("Not Found");
     }
-    // res.status(200).json(oneContact);
-    res.redirect('/api/contacts');
+    res.status(200).json(oneContact);
 });
 
 // delete route /:id
@@ -71,9 +74,8 @@ const deleteContact = asyncHandler(async (req, res) => {
         throw new Error("User dont have permission to update other user contact");
     }
 
-    await Contacts.findByIdAndDelete(id);
-    // res.json(oneContact);
-    res.redirect("/api/contacts");
+    const oneContact = await Contacts.findByIdAndDelete(id);
+    res.status(200).json(oneContact);
 });
 
 module.exports = {getAllContacts, getContact, createContact, updateContact, deleteContact};
